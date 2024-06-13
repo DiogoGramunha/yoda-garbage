@@ -1,5 +1,6 @@
 local NPC = Config.NPC
 local Context = Config.Context
+local onjob = false
 
 local npczone = exports.ox_target:addBoxZone({
     coords = vec3(NPC.coordx, NPC.coordy, NPC.coordz + 1),
@@ -25,6 +26,7 @@ RegisterNetEvent('yoda-chopshop:OpenMenu', function(args)
                 icon = Context.iconAlone,
                 onSelect = function()
                     TriggerServerEvent('yoda-chopshop:RentVeh')
+                    onjob = true
                 end,
                 metadata = {
                     {label = Context.labelAlone, value = Context.valueAlone}
@@ -35,13 +37,8 @@ RegisterNetEvent('yoda-chopshop:OpenMenu', function(args)
                 description = Context.descriptionFriend,
                 icon = Context.iconFriend,
                 onSelect = function()
-                    local car = 'trash'
-                    local CarSpawn = Context.CarSpawn
-                    RequestModel('trash')
-                    while not HasModelLoaded('trash') do 
-                        Wait(500)
-                    end
-                    car = CreateVehicle(GetHashKey('trash'), CarSpawn.coordx, CarSpawn.coordy, CarSpawn.coordz, CarSpawn.heading, true, true)
+                    TriggerServerEvent('yoda-chopshop:RentVeh')
+                    onjob = true
                 end,
                 metadata = {
                     {label = Context.labelFriend, value = Context.value}
@@ -49,19 +46,55 @@ RegisterNetEvent('yoda-chopshop:OpenMenu', function(args)
             },
         }
     })
-    exports.ox_lib:showContext('Job_Menu')
+    exports.ox_lib:registerContext({
+        id = 'Job_Menu2',
+        title = Context.title,
+        options = {
+            {
+                title = Context.titleFinish,
+                description = Context.descriptionFinish,
+                icon = Context.iconFinish,
+                onSelect = function()
+                    onjob = false
+                end,
+            },
+            {
+                title = Context.titleAbort,
+                description = Context.descriptionAbort,
+                icon = Context.iconAbort,
+                onSelect = function()
+                    onjob = false
+                end,
+            },
+        }
+    })
+    if not onjob then
+        exports.ox_lib:showContext('Job_Menu')
+    else
+        exports.ox_lib:showContext('Job_Menu2')
+    end
 end)
 
 RegisterNetEvent('yoda-chopshop:RentVehResponse', function(rentVeh)
     if rentVeh then
-        local car = 'trash'
         local CarSpawn = Config.CarSpawn
         RequestModel('trash')
         while not HasModelLoaded('trash') do 
             Wait(500)
         end
-        car = CreateVehicle(GetHashKey('trash'), CarSpawn.coordx, CarSpawn.coordy, CarSpawn.coordz, CarSpawn.heading, true, true)
+        local car = CreateVehicle(GetHashKey('trash'), CarSpawn.coordx, CarSpawn.coordy, CarSpawn.coordz, CarSpawn.heading, true, true)
         exports.ox_lib:notify(Config.Notify.JobStarted)
+
+        Citizen.CreateThread(function()
+            local playerPed = PlayerPedId()
+            while true do
+                Citizen.Wait(1000)
+                if IsPedInVehicle(playerPed, car, false) then
+                    TriggerEvent('yoda-chopshop:garbageLocation')
+                    break
+                end
+            end
+        end)
     else
         exports.ox_lib:notify(Config.Notify.NotEnoughMoney)
     end
@@ -77,7 +110,6 @@ Citizen.CreateThread(function()
         timer = timer + 10
     end
     if not HasModelLoaded(model) then
-        print("Falha ao carregar o modelo: " .. NPC.model)
         return
     end
     local ped = CreatePed(1, model, NPC.coordx, NPC.coordy, NPC.coordz, NPC.heading, false, false, 0)
@@ -87,6 +119,14 @@ Citizen.CreateThread(function()
     SetPedCanPlayAmbientAnims(ped, false)
     SetPedCanRagdollFromPlayerImpact(ped, false)
     SetEntityInvincible(ped, true)
-    print("NPC criado com sucesso: " .. NPC.model)
+
     Citizen.Wait(10)
+end)
+
+RegisterNetEvent('yoda-chopshop:FinishJob', function()
+    
+end)
+
+RegisterNetEvent('yoda-chopshop:AbortJob', function()
+
 end)
