@@ -156,6 +156,7 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
     end
 end)
 
+
 local currentLocationKey = nil
 
 RegisterNetEvent('yoda-garbage:garbageLocation', function()
