@@ -3,7 +3,7 @@ use_experimental_fxv2_oal 'yes'
 lua54 'yes'
 game 'gta5'
 
-name 'yoda_chopshop'
+name 'yoda_garbage'
 author 'YodaThings'
 version '1.0.0'
 
