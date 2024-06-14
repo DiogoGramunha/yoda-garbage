@@ -15,15 +15,6 @@ local GarbageJobBlip = AddBlipForCoord(Config.CarSpawn.coordx, Config.CarSpawn.c
     AddTextComponentString("Garbage Center")
     EndTextCommandSetBlipName(GarbageJobBlip)
 
-RegisterCommand('stgb', function()
-    TriggerEvent('yoda-garbage:garbageLocation')
-end)
-
-RegisterCommand('rmb', function()
-    DestroyBins()
-end)
-
-
 function clearBlipsAndTargets()
     if zoneBlip then
         RemoveBlip(zoneBlip)
@@ -165,7 +156,6 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
     end
 end)
 
--- WorkAlone
 local currentLocationKey = nil
 
 RegisterNetEvent('yoda-garbage:garbageLocation', function()
