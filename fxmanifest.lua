@@ -9,14 +9,16 @@ version '1.0.0'
 
 shared_script {
     '@es_extended/imports.lua',
+    '@ox_lib/init.lua',
+}
+
+client_script {
+    'config.lua',
+    'ConfigLocs.lua',
+    'client/*.lua'
 }
 
 server_script {
     'config.lua',
     'server/*.lua'
-}
-
-client_script {
-    'config.lua',
-    'client/*.lua'
 }
