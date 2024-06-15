@@ -58,7 +58,7 @@ Config.Notify = {
     },
     BinDeposited = {
         title = 'Garbage Job',
-        description = 'You deposited a bin. Lets get the others: ' ,
+        description = 'You deposited a bin. Lets get the others!' ,
         duration = 5000,
         type = 'success'
     },
@@ -76,7 +76,7 @@ Config.Notify = {
     },
     Payment = {
         title = 'Garbage Job',
-        description = 'You get paid de:',
+        description = 'You get paid!',
         duration = 10000,
         type = 'success'
     }
