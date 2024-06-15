@@ -7,7 +7,7 @@
 
 ## Author 
 
-- [@YodaThings](https://github.com/DiogoGramunha)
+[@YodaThings](https://github.com/DiogoGramunha)
 
 ## Preview 
 
