@@ -7,12 +7,12 @@
 
 ## Author 
 
--[@YodaThings](https://github.com/DiogoGramunha)
+- [@YodaThings](https://github.com/DiogoGramunha)
 
 ## Preview 
 
--[Preview](https://www.youtube.com/watch?v=l333vv28j5Y)
+- [Preview](https://www.youtube.com/watch?v=l333vv28j5Y)
 
 ## Support
 
--[Discord](https://discord.gg/UN2f8Gx4Dj)
+- [Discord](https://discord.gg/UN2f8Gx4Dj)
