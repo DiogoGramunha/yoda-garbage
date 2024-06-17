@@ -43,6 +43,7 @@ end
 local NPC = Config.NPC
 local Context = Config.Context
 local onjob = false
+local onDuty = false
 
 local npczone = exports.ox_target:addBoxZone({
     coords = vec3(NPC.coordx, NPC.coordy, NPC.coordz + 1),
@@ -63,6 +64,17 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
         title = Context.title,
         options = {
             {
+                title = 'On Duty',
+                description = '',
+                icon = Context.iconAlone,
+                onSelect = function()
+                    onDuty = true,
+                end,
+                metadata = {
+                    {label = Context.labelAlone, value = Context.value}
+                },
+            },
+            {
                 title = Context.titleAlone,
                 description = Context.descriptionAlone,
                 icon = Context.iconAlone,
@@ -74,10 +86,11 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
                     {label = Context.labelAlone, value = Context.value}
                 },
             },
-            --[[ {
+            {
                 title = Context.titleFriend,
                 description = Context.descriptionFriend,
                 icon = Context.iconFriend,
+                disabled = true,
                 onSelect = function()
                     TriggerServerEvent('yoda-garbage:RentVeh')
                     onjob = true
@@ -85,7 +98,7 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
                 metadata = {
                     {label = Context.labelFriend, value = Context.value}
                 },
-            }, ]]
+            },
         }
     })
     exports.ox_lib:registerContext({
@@ -122,12 +135,18 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
             },
         }
     })
-    if not onjob then
-        exports.ox_lib:showContext('Job_Menu')
-    elseif binsDeposited == 0 then
-        exports.ox_lib:showContext('Job_Menu2')
+    if onDuty then
+        disabled = false
     else 
-        exports.ox_lib:showContext('Job_Menu3')
+        disabled = true
+    end
+    
+    if not onjob then
+    exports.ox_lib:showContext('Job_Menu')
+    elseif binsDeposited == 0 then
+    exports.ox_lib:showContext('Job_Menu2')
+    else 
+    exports.ox_lib:showContext('Job_Menu3')
     end
 end)
 
