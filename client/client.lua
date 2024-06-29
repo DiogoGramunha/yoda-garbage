@@ -68,7 +68,7 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
                 description = '',
                 icon = Context.iconAlone,
                 onSelect = function()
-                    onDuty = true,
+                    onDuty = true
                 end,
                 metadata = {
                     {label = Context.labelAlone, value = Context.value}
