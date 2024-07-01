@@ -1,4 +1,4 @@
-local ESX = nil
+local ESX = exports["es_extended"]:getSharedObject()
 
 RegisterNetEvent('yoda-garbage:RentVeh')
 AddEventHandler('yoda-garbage:RentVeh', function()
