@@ -21,8 +21,10 @@ AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
     local _source = source
     if binsDeposited and binsDeposited > 0 then 
         local totalPayment = (payment * binsDeposited) + Config.Context.value
+        exports.ox_inventory:AddItem(_source, 'cash', totalPayment)
         TriggerClientEvent('yoda-garbage:Payment', _source, totalPayment)
     else
         TriggerClientEvent('yoda-garbage:paymentFail', _source)
+        exports.ox_inventory:AddItem(_source, 'cash', Config.Context.value)
     end
 end)
