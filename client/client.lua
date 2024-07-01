@@ -1,11 +1,16 @@
-local currentBlips = {}
-local currentTargets = {}
 local currentVehicle = nil
 local PlayerProps = nil
 local PlayerHasProp = false
 local payment = 0
-local trunk = nil
 local binsDeposited = 0 
+local currentGarbages = {}
+local isInteracting = {}
+local trunk = nil
+local isCarryingGarbage = false
+local NPC = Config.NPC
+local Context = Config.Context
+local onjob = false
+local onDuty = false
 
 local GarbageJobBlip = AddBlipForCoord(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
     SetBlipSprite(GarbageJobBlip, 318)
@@ -16,19 +21,16 @@ local GarbageJobBlip = AddBlipForCoord(Config.CarSpawn.coordx, Config.CarSpawn.c
     EndTextCommandSetBlipName(GarbageJobBlip)
 
 function clearBlipsAndTargets()
-    if zoneBlip then
-        RemoveBlip(zoneBlip)
-    end
-    for _, blip in ipairs(currentBlips) do
-        RemoveBlip(blip.blip)
-    end
-    for _, target in ipairs(currentTargets) do
-        if target.id then
-            exports.ox_target:removeZone(target.id)
+    for _, garbage in pairs(currentGarbages) do
+        if garbage.blip then
+            RemoveBlip(garbage.blip)
+        end
+        if garbage.targetId then
+            exports.ox_target:removeZone(garbage.targetId)
         end
     end
-    currentBlips = {}
-    currentTargets = {}
+    currentGarbages = {}
+    isInteracting = {}
 end
 
 function deleteCurrentVehicle()
@@ -39,11 +41,6 @@ function deleteCurrentVehicle()
         currentVehicle = nil
     end
 end
-
-local NPC = Config.NPC
-local Context = Config.Context
-local onjob = false
-local onDuty = false
 
 local npczone = exports.ox_target:addBoxZone({
     coords = vec3(NPC.coordx, NPC.coordy, NPC.coordz + 1),
@@ -229,62 +226,66 @@ RegisterNetEvent('yoda-garbage:createZone&GarbageBlips', function(locationKey)
                 BeginTextCommandSetBlipName("STRING")
                 AddTextComponentString("Garbage Pickup")
                 EndTextCommandSetBlipName(garbageBlip)
-                table.insert(currentBlips, {blip = garbageBlip, locx = garbage.locx, locy = garbage.locy, locz = garbage.locz, radius = 1.5})
-                local targetOptions = { name = 'yoda-garbage:garbageTarget', onSelect = function() TriggerEvent('yoda-garbage:getGarbage') end, icon = 'fa-solid fa-trash', label = 'Pick up trash' }
-                table.insert(currentTargets, { coords = vec3(garbage.locx, garbage.locy, garbage.locz), radius = 1.5, id = exports.ox_target:addSphereZone({ coords = vec3(garbage.locx, garbage.locy, garbage.locz), radius = 1.5, options = targetOptions }), event = 'yoda-garbage:garbageTarget' })
+                
+                local targetOptions = { 
+                    name = 'yoda-garbage:garbageTarget', 
+                    onSelect = function() 
+                        if not isInteracting[i] and not isCarryingGarbage then
+                            TriggerEvent('yoda-garbage:getGarbage', i) 
+                        end
+                    end, 
+                    icon = 'fa-solid fa-trash', 
+                    label = 'Pick up trash' 
+                }
+                local targetId = exports.ox_target:addSphereZone({ 
+                    coords = vector3(garbage.locx, garbage.locy, garbage.locz), 
+                    radius = 1.5, 
+                    options = targetOptions 
+                })
+                
+                currentGarbages[i] = { blip = garbageBlip, targetId = targetId, coords = vector3(garbage.locx, garbage.locy, garbage.locz) }
+                isInteracting[i] = false
+                
                 table.remove(garbageKeys, randIndex)
             end
         end
     end
 end)
 
+RegisterNetEvent('yoda-garbage:getGarbage', function(index)
+    isInteracting[index] = true
+    isCarryingGarbage = true
+    TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
+    Citizen.Wait(5000)
+    ClearPedTasks(PlayerPedId())
+    if not HasAnimDictLoaded("anim@heists@narcotics@trash") then
+        RequestAnimDict("anim@heists@narcotics@trash")
+    end
+    AddBinsToPlayer()
+    TaskPlayAnim(PlayerPedId(), 'anim@heists@narcotics@trash', 'walk', 1.0, -1.0, -1, 49, 0, 0, 0, 0)
+    hasBin = true
+    PlayerHasProp = true
 
-RegisterNetEvent('yoda-garbage:getGarbage', function()
-        TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
-        Citizen.Wait(5000)
-        ClearPedTasks(PlayerPedId())
-        if not HasAnimDictLoaded("anim@heists@narcotics@trash") then
-            RequestAnimDict("anim@heists@narcotics@trash")
-        end
-        AddBinsToPlayer()
-        TaskPlayAnim(PlayerPedId(), 'anim@heists@narcotics@trash', 'walk', 1.0, -1.0,-1,49,0,0, 0,0)
-        hasBin = true
-        PlayerHasProp = true
-    
-    local function removeTarget()
-        local playerPed = PlayerPedId()
-        local coords = GetEntityCoords(playerPed)
-        
-        if currentTargets then
-            for i, target in ipairs(currentTargets) do
-                if target.coords and target.id and Vdist(target.coords.x, target.coords.y, target.coords.z, coords.x, coords.y, coords.z) <= target.radius then
-                    exports.ox_target:removeZone(target.id)
-                    table.remove(currentTargets, i)
-                    break
-                end
+    local function removeTargetAndBlip(index)
+        if currentGarbages[index] then
+            local garbage = currentGarbages[index]
+
+            if garbage.targetId then
+                exports.ox_target:removeZone(garbage.targetId)
             end
+
+            if garbage.blip then
+                RemoveBlip(garbage.blip)
+            end
+
+            currentGarbages[index] = nil
+            isInteracting[index] = nil
         end
     end
-    
-    local function removeBlip()
-        local playerPed = PlayerPedId()
-        local coords = GetEntityCoords(playerPed)
-        
-        if currentBlips then
-            for i, blip in ipairs(currentBlips) do
-                if blip.locx and blip.locy and blip.locz and Vdist(blip.locx, blip.locy, blip.locz, coords.x, coords.y, coords.z) <= blip.radius then
-                    RemoveBlip(blip.blip)
-                    table.remove(currentBlips, i)
-                    break
-                end
-            end
-        end
-    end
-    removeTarget()
-    removeBlip()
+
+    removeTargetAndBlip(index)
 
     TriggerEvent('yoda-garbage:giveGarbage')
-
 end)
 
 RegisterNetEvent('yoda-garbage:giveGarbage', function()
@@ -309,12 +310,18 @@ function interact()
     Citizen.Wait(1000)
     DestroyBins()
     ClearPedTasksImmediately(GetPlayerPed(-1))
-    binsDeposited = binsDeposited +1 
+    binsDeposited = binsDeposited + 1
+    isCarryingGarbage = false
+
     if binsDeposited == numGarbages then
+        RemoveBlip(zoneBlip)
         exports.ox_lib:notify(Config.Notify.JobEnded)
+
+        SetNewWaypoint(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
     else
         exports.ox_lib:notify(Config.Notify.BinDeposited)
     end
+
     payment = payment + Config.GarbageValue.value
 end
 
