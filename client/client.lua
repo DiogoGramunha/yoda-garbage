@@ -29,6 +29,7 @@ function clearBlipsAndTargets()
             exports.ox_target:removeZone(garbage.targetId)
         end
     end
+    RemoveBlip(zoneBlip)
     currentGarbages = {}
     isInteracting = {}
 end
