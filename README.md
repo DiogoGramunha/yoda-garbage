@@ -3,6 +3,7 @@
 ## Installation
 
 - Install and put it to the resources folder
+- Go into config.lua, and set your inventory, notify and framework
 - Ensure yoda-garbage in your server.cfg
 
 ## Author 
