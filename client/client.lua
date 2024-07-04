@@ -11,6 +11,8 @@ local NPC = Config.NPC
 local Context = Config.Context
 local onjob = false
 local onDuty = false
+local FRAMEWORK = Config.FRAMEWORK
+local NOTIFY = Config.Notify
 
 local GarbageJobBlip = AddBlipForCoord(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
     SetBlipSprite(GarbageJobBlip, 318)
@@ -156,7 +158,11 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
             Wait(500)
         end
         currentVehicle = CreateVehicle(GetHashKey('trash'), CarSpawn.coordx, CarSpawn.coordy, CarSpawn.coordz, CarSpawn.heading, true, true)
-        exports.ox_lib:notify(Config.Notify.JobStarted)
+        if NOTIFY == 'OX' then
+            exports.ox_lib:notify(Config.Notify.JobStarted)
+        else
+            TriggerClientEvent('QBCore:Notify', source, Config.Notify.JobStarted.description, 'success')
+        end
 
         Citizen.CreateThread(function()
             local playerPed = PlayerPedId()
@@ -169,7 +175,11 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
             end
         end)
     else
-        exports.ox_lib:notify(Config.Notify.NotEnoughMoney)
+        if NOTIFY == 'OX' then
+            exports.ox_lib:notify(Config.Notify.NotEnoughMoney)
+        else
+            TriggerClientEvent('QBCore:Notify', source, Config.Notify.NotEnoughMoney.description, 'success')
+        end
     end
 end)
 
@@ -190,7 +200,11 @@ RegisterNetEvent('yoda-garbage:garbageLocation', function()
         SetNewWaypoint(randomLocation.locx, randomLocation.locy)
         TriggerEvent('yoda-garbage:createZone&GarbageBlips', currentLocationKey)
     else
-        exports.ox_lib:notify({type = 'error', description = 'No pick-up location set up!'})
+        if NOTIFY == 'OX' then
+            exports.ox_lib:notify({type = 'error', description = 'No pick-up location set up!'})
+        else 
+            TriggerClientEvent('QBCore:Notify', source, 'No pick-up location set up!', 'success')
+        end
     end
 end)
 
@@ -316,11 +330,19 @@ function interact()
 
     if binsDeposited == numGarbages then
         RemoveBlip(zoneBlip)
-        exports.ox_lib:notify(Config.Notify.JobEnded)
+        if NOTIFY == 'OX' then
+            exports.ox_lib:notify(Config.Notify.JobEnded)
+        else
+            TriggerClientEvent('QBCore:Notify', source, Config.Notify.JobEnded.description, 'success')
+        end
 
         SetNewWaypoint(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
     else
-        exports.ox_lib:notify(Config.Notify.BinDeposited)
+        if NOTIFY == 'OX' then
+            exports.ox_lib:notify(Config.Notify.BinDeposited)
+        else
+            TriggerClientEvent('QBCore:Notify', source, Config.Notify.BinDeposited.description, 'success')
+        end
     end
 
     payment = payment + Config.GarbageValue.value
@@ -358,7 +380,11 @@ function DestroyBins()
 end
 
 RegisterNetEvent('yoda-garbage:paymentFail', function()
-    exports.ox_lib:notify(Config.Notify.paymentFail)
+    if NOTIFY == 'OX' then
+        exports.ox_lib:notify(Config.Notify.paymentFail)
+    else 
+        TriggerClientEvent('QBCore:Notify', source, Config.Notify.paymentFail.description, 'error')
+    end
 end)
 
 RegisterNetEvent('yoda-garbage:Payment', function()
