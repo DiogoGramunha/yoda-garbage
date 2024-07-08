@@ -14,6 +14,14 @@ local onDuty = false
 local FRAMEWORK = Config.FRAMEWORK
 local NOTIFY = Config.Notify
 
+local FRAMEWORK = Config.FRAMEWORK
+
+if FRAMEWORK == 'ESX' then
+    ESX = exports["es_extended"]:getSharedObject()
+else
+    QBCore = exports['qb-core']:GetCoreObject()
+end
+
 local GarbageJobBlip = AddBlipForCoord(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
     SetBlipSprite(GarbageJobBlip, 318)
     SetBlipColour(GarbageJobBlip, 2)
@@ -158,10 +166,21 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
             Wait(500)
         end
         currentVehicle = CreateVehicle(GetHashKey('trash'), CarSpawn.coordx, CarSpawn.coordy, CarSpawn.coordz, CarSpawn.heading, true, true)
+        
+        if currentVehicle and DoesEntityExist(currentVehicle) then
+            print("Vehicle created successfully with ID: " .. currentVehicle)
+        else
+            print("Failed to create vehicle.")
+        end
+
+        if FRAMEWORK == 'QB' then
+            TriggerServerEvent('yoda-garbage:giveKeys', currentVehicle)
+        end
+        
         if NOTIFY == 'OX' then
             exports.ox_lib:notify(Config.Notify.JobStarted)
         else
-            TriggerClientEvent('QBCore:Notify', source, Config.Notify.JobStarted.description, 'success')
+            QBCore.Functions.Notify(Config.Notify.JobStarted.description, 'success', 5000)
         end
 
         Citizen.CreateThread(function()
@@ -178,7 +197,7 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
         if NOTIFY == 'OX' then
             exports.ox_lib:notify(Config.Notify.NotEnoughMoney)
         else
-            TriggerClientEvent('QBCore:Notify', source, Config.Notify.NotEnoughMoney.description, 'success')
+            QBCore.Functions.Notify(Config.Notify.NotEnoughMoney.description, 'error', 5000)
         end
     end
 end)
@@ -203,7 +222,7 @@ RegisterNetEvent('yoda-garbage:garbageLocation', function()
         if NOTIFY == 'OX' then
             exports.ox_lib:notify({type = 'error', description = 'No pick-up location set up!'})
         else 
-            TriggerClientEvent('QBCore:Notify', source, 'No pick-up location set up!', 'success')
+            QBCore.Functions.Notify('No pick-up location set up!', 'error', 5000)
         end
     end
 end)
@@ -333,7 +352,7 @@ function interact()
         if NOTIFY == 'OX' then
             exports.ox_lib:notify(Config.Notify.JobEnded)
         else
-            TriggerClientEvent('QBCore:Notify', source, Config.Notify.JobEnded.description, 'success')
+            QBCore.Functions.Notify(Config.Notify.JobEnded.description, 'success', 5000)
         end
 
         SetNewWaypoint(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
@@ -341,7 +360,7 @@ function interact()
         if NOTIFY == 'OX' then
             exports.ox_lib:notify(Config.Notify.BinDeposited)
         else
-            TriggerClientEvent('QBCore:Notify', source, Config.Notify.BinDeposited.description, 'success')
+            QBCore.Functions.Notify(Config.Notify.BinDeposited.description, 'success', 5000)
         end
     end
 
@@ -383,7 +402,7 @@ RegisterNetEvent('yoda-garbage:paymentFail', function()
     if NOTIFY == 'OX' then
         exports.ox_lib:notify(Config.Notify.paymentFail)
     else 
-        TriggerClientEvent('QBCore:Notify', source, Config.Notify.paymentFail.description, 'error')
+        QBCore.Functions.Notify(Config.Notify.paymentFail.description, 'error', 5000)
     end
 end)
 
