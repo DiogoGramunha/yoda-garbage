@@ -1,21 +1,32 @@
 local FRAMEWORK = Config.FRAMEWORK
 local INVENTORY = Config.INVENTORY
 
-print(FRAMEWORK)
-print(INVENTORY)
-
 if FRAMEWORK == 'ESX' then
     ESX = exports["es_extended"]:getSharedObject()
 else
     QBCore = exports['qb-core']:GetCoreObject()
 end
 
+RegisterNetEvent('yoda-garbage:giveKeys')
+AddEventHandler('yoda-garbage:giveKeys', function(currentVehicle)
+    if currentVehicle and DoesEntityExist(currentVehicle) then
+        vehicle = currentVehicle
+        plate = QBCore.Functions.GetPlate(vehicle)
+        print("Vehicle plate: " .. plate)
+
+        exports.qbx_vehiclekeys:GiveKeys(source, plate)
+    else
+        print("Invalid vehicle entity received.")
+    end
+end)
+
+
 RegisterNetEvent('yoda-garbage:RentVeh')
 AddEventHandler('yoda-garbage:RentVeh', function()
-    local xPlayer = ESX.GetPlayerFromId(source)
     local rentVeh = false
 
     if FRAMEWORK == 'ESX' then
+        local xPlayer = ESX.GetPlayerFromId(source)
         if xPlayer.getInventoryItem('cash').count >= Config.Context.value then
             xPlayer.removeInventoryItem("cash", Config.Context.value)
             rentVeh = true
@@ -27,14 +38,14 @@ AddEventHandler('yoda-garbage:RentVeh', function()
         local player = QBCore.Functions.GetPlayer(source)
         if player.Functions.GetItemByName('cash') and player.Functions.GetItemByName('cash').amount >= Config.Context.value then
             player.Functions.RemoveItem("cash", Config.Context.value)
-            TriggerClientEvent('QBCore:Notify', source, 'You have rented a vehicle with cash.', 'success')
+            QBCore.Functions.Notify('You have rented a vehicle with cash.', 'success', 5000)
             rentVeh = true
         elseif player.PlayerData.money.bank >= Config.Context.value then
             player.Functions.RemoveMoney('bank', Config.Context.value)
-            TriggerClientEvent('QBCore:Notify', source, 'You have rented a vehicle with bank money.', 'success')
+            QBCore.Functions.Notify('You have rented a vehicle with ith bank money.', 'success', 5000)
             rentVeh = true
         else
-            TriggerClientEvent('QBCore:Notify', source, 'You do not have enough money to rent a vehicle.', 'error')
+            QBCore.Functions.Notify('You do not have enough money to rent a vehicle.', 'success', 5000)
             rentVeh = false
         end
     end
