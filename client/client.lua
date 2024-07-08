@@ -11,10 +11,9 @@ local NPC = Config.NPC
 local Context = Config.Context
 local onjob = false
 local onDuty = false
-local FRAMEWORK = Config.FRAMEWORK
-local NOTIFY = Config.Notify
 
 local FRAMEWORK = Config.FRAMEWORK
+local NOTIFY = Config.NotifyType
 
 if FRAMEWORK == 'ESX' then
     ESX = exports["es_extended"]:getSharedObject()
