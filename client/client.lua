@@ -408,7 +408,11 @@ RegisterNetEvent('yoda-garbage:paymentFail', function()
 end)
 
 RegisterNetEvent('yoda-garbage:Payment', function()
-    exports.ox_lib:notify(Config.Notify.Payment)
+    if NOTIFY == 'OX' then
+        exports.ox_lib:notify(Config.Notify.Payment)
+    else 
+        QBCore.Functions.Notify(Config.Notify.Payment, 'success', 5000)
+    end
 end)
 
 Citizen.CreateThread(function()
