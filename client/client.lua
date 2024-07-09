@@ -12,7 +12,7 @@ local Context = Config.Context
 local onjob = false
 local onDuty = false
 local FRAMEWORK = Config.FRAMEWORK
-local NOTIFY = Config.Notify
+local NOTIFY = Config.NotifyType
 
 local FRAMEWORK = Config.FRAMEWORK
 
