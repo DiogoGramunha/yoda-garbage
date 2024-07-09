@@ -11,9 +11,10 @@ local NPC = Config.NPC
 local Context = Config.Context
 local onjob = false
 local onDuty = false
+local FRAMEWORK = Config.FRAMEWORK
+local NOTIFY = Config.Notify
 
 local FRAMEWORK = Config.FRAMEWORK
-local NOTIFY = Config.NotifyType
 
 if FRAMEWORK == 'ESX' then
     ESX = exports["es_extended"]:getSharedObject()
@@ -168,14 +169,14 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
         
         if currentVehicle and DoesEntityExist(currentVehicle) then
             print("Vehicle created successfully with ID: " .. currentVehicle)
+            if FRAMEWORK == 'QB' then
+                local vehicleNetId = NetworkGetNetworkIdFromEntity(currentVehicle)
+                TriggerServerEvent('yoda-garbage:giveKeys', vehicleNetId)
+            end
         else
             print("Failed to create vehicle.")
         end
 
-        if FRAMEWORK == 'QB' then
-            TriggerServerEvent('yoda-garbage:giveKeys', currentVehicle)
-        end
-        
         if NOTIFY == 'OX' then
             exports.ox_lib:notify(Config.Notify.JobStarted)
         else
@@ -200,6 +201,7 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
         end
     end
 end)
+
 
 
 local currentLocationKey = nil
@@ -431,4 +433,3 @@ Citizen.CreateThread(function()
 
     Citizen.Wait(10)
 end)
-
