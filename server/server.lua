@@ -8,10 +8,10 @@ else
 end
 
 RegisterNetEvent('yoda-garbage:giveKeys')
-AddEventHandler('yoda-garbage:giveKeys', function(currentVehicle)
+AddEventHandler('yoda-garbage:giveKeys', function(vehicleNetId)
+    local currentVehicle = NetworkGetEntityFromNetworkId(vehicleNetId)
     if currentVehicle and DoesEntityExist(currentVehicle) then
-        vehicle = currentVehicle
-        plate = QBCore.Functions.GetPlate(vehicle)
+        local plate = QBCore.Functions.GetPlate(currentVehicle)
         print("Vehicle plate: " .. plate)
 
         exports.qbx_vehiclekeys:GiveKeys(source, plate)
@@ -19,6 +19,7 @@ AddEventHandler('yoda-garbage:giveKeys', function(currentVehicle)
         print("Invalid vehicle entity received.")
     end
 end)
+
 
 
 RegisterNetEvent('yoda-garbage:RentVeh')
