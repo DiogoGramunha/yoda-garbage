@@ -1,3 +1,5 @@
+-- server.lua
+
 local FRAMEWORK = Config.FRAMEWORK
 local INVENTORY = Config.INVENTORY
 
@@ -19,8 +21,6 @@ AddEventHandler('yoda-garbage:giveKeys', function(vehicleNetId)
         print("Invalid vehicle entity received.")
     end
 end)
-
-
 
 RegisterNetEvent('yoda-garbage:RentVeh')
 AddEventHandler('yoda-garbage:RentVeh', function()
