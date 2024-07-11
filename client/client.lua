@@ -1,3 +1,5 @@
+-- client.lua
+
 local currentVehicle = nil
 local PlayerProps = nil
 local PlayerHasProp = false
@@ -12,7 +14,7 @@ local Context = Config.Context
 local onjob = false
 local onDuty = false
 local FRAMEWORK = Config.FRAMEWORK
-local NOTIFY = Config.NotifyType
+local NOTIFY = Config.Notify
 
 local FRAMEWORK = Config.FRAMEWORK
 
@@ -408,11 +410,7 @@ RegisterNetEvent('yoda-garbage:paymentFail', function()
 end)
 
 RegisterNetEvent('yoda-garbage:Payment', function()
-    if NOTIFY == 'OX' then
-        exports.ox_lib:notify(Config.Notify.Payment)
-    else 
-        QBCore.Functions.Notify(Config.Notify.Payment, 'success', 5000)
-    end
+    exports.ox_lib:notify(Config.Notify.Payment)
 end)
 
 Citizen.CreateThread(function()
@@ -437,3 +435,4 @@ Citizen.CreateThread(function()
 
     Citizen.Wait(10)
 end)
+
