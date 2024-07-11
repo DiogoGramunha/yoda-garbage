@@ -1,6 +1,6 @@
 Config = {}
 
-Config.FRAMEWORK = 'ESX' -- ESX OR QB
+Config.FRAMEWORK = 'QB' -- ESX OR QB
 Config.INVENTORY = 'OX' -- OX OR QB
 Config.NotifyType = 'OX' -- OX OR QB
 
