@@ -5,7 +5,7 @@ game 'gta5'
 
 name 'yoda_garbage'
 author 'YodaThings'
-version '1.0.0'
+version '1.4.0'
 
 shared_script {
     '@ox_lib/init.lua',
