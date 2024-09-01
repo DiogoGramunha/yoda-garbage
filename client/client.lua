@@ -15,7 +15,7 @@ local onjob = false
 local onDuty = false
 local FRAMEWORK = Config.FRAMEWORK
 local NOTIFY = Config.NotifyType
-
+local TARGET = Config.Target
 local FRAMEWORK = Config.FRAMEWORK
 
 if FRAMEWORK == 'ESX' then
@@ -37,8 +37,14 @@ function clearBlipsAndTargets()
         if garbage.blip then
             RemoveBlip(garbage.blip)
         end
-        if garbage.targetId then
-            exports.ox_target:removeZone(garbage.targetId)
+        if TARGET == 'OX' then
+            if garbage.targetId then
+                exports.ox_target:removeZone(garbage.targetId)
+            end
+        else
+            if garbage.targetName then
+                exports['qb-target']:RemoveZone(garbage.targetName)
+            end
         end
     end
     RemoveBlip(zoneBlip)
@@ -55,18 +61,7 @@ function deleteCurrentVehicle()
     end
 end
 
-local npczone = exports.ox_target:addBoxZone({
-    coords = vec3(NPC.coordx, NPC.coordy, NPC.coordz + 1),
-    size = vec3(1.5, 1.5, 1.5),
-    rotation = 90,
-    debug = drawZones,
-    options = {{
-        name = 'yoda-garbage:startJob',
-        event = 'yoda-garbage:OpenMenu',
-        icon = 'fa-solid fa-cube',
-        label = 'Start Job'
-    }}
-})
+
 
 RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
     exports.ox_lib:registerContext({
@@ -265,25 +260,44 @@ RegisterNetEvent('yoda-garbage:createZone&GarbageBlips', function(locationKey)
                 AddTextComponentString("Garbage Pickup")
                 EndTextCommandSetBlipName(garbageBlip)
                 
-                local targetOptions = { 
-                    name = 'yoda-garbage:garbageTarget', 
-                    onSelect = function() 
-                        if not isInteracting[i] and not isCarryingGarbage then
-                            TriggerEvent('yoda-garbage:getGarbage', i) 
-                        end
-                    end, 
-                    icon = 'fa-solid fa-trash', 
-                    label = 'Pick up trash' 
-                }
-                local targetId = exports.ox_target:addSphereZone({ 
-                    coords = vector3(garbage.locx, garbage.locy, garbage.locz), 
-                    radius = 1.5, 
-                    options = targetOptions 
-                })
-                
                 currentGarbages[i] = { blip = garbageBlip, targetId = targetId, coords = vector3(garbage.locx, garbage.locy, garbage.locz) }
                 isInteracting[i] = false
                 
+                if TARGET == 'OX' then
+                    local targetOptions = { 
+                        name = 'yoda-garbage:garbageTarget', 
+                        onSelect = function() 
+                            if not isInteracting[i] and not isCarryingGarbage then
+                                TriggerEvent('yoda-garbage:getGarbage', i) 
+                            end
+                        end, 
+                        icon = 'fa-solid fa-trash', 
+                        label = 'Pick up trash'
+                    }
+                    local targetId = exports.ox_target:addSphereZone({ 
+                        coords = vector3(garbage.locx, garbage.locy, garbage.locz), 
+                        radius = 1.5, 
+                        options = targetOptions 
+                    })
+                    currentGarbages[i] = { blip = garbageBlip, targetId = targetId, coords = vector3(garbage.locx, garbage.locy, garbage.locz) }
+                    isInteracting[i] = false
+                else 
+                    local name = 'target' .. i
+                    local targetId = exports['qb-target']:AddCircleZone(name, vector3(garbage.locx, garbage.locy, garbage.locz), 2.0, {
+                        name = name, debugPoly = false , useZ = true}, {
+                            options = {{label = 'Pick up trash', icon = 'fa-solid fa-trash', 
+                            action = function () 
+                                if not isInteracting[i] and not isCarryingGarbage then
+                                    TriggerEvent('yoda-garbage:getGarbage', i) 
+                                end
+
+                            end}},
+                            distance = 2.0
+                    })
+                    currentGarbages[i] = { blip = garbageBlip, targetId = targetId, targetName = name, coords = vector3(garbage.locx, garbage.locy, garbage.locz) }
+                    isInteracting[i] = false
+                end
+
                 table.remove(garbageKeys, randIndex)
             end
         end
@@ -308,8 +322,14 @@ RegisterNetEvent('yoda-garbage:getGarbage', function(index)
         if currentGarbages[index] then
             local garbage = currentGarbages[index]
 
-            if garbage.targetId then
-                exports.ox_target:removeZone(garbage.targetId)
+            if TARGET == 'OX' then
+                if garbage.targetId then
+                    exports.ox_target:removeZone(garbage.targetId)
+                end
+            else
+                if garbage.targetName then
+                    exports['qb-target']:RemoveZone(garbage.targetName)
+                end
             end
 
             if garbage.blip then
@@ -330,12 +350,24 @@ RegisterNetEvent('yoda-garbage:giveGarbage', function()
     if PlayerHasProp then
         local boneIndex = GetEntityBoneIndexByName(currentVehicle, "boot")
         if boneIndex ~= -1 then
-            local bonePos = GetWorldPositionOfEntityBone(currentVehicle, boneIndex)
-            trunk = exports.ox_target:addSphereZone({
-                coords = bonePos,
-                radius = 2,
-                options = {{onSelect = function() interact() end, icon = 'fa-regular fa-hand', label = 'Deposit Bin',}}
-            })
+            if TARGET == 'OX' then
+                local bonePos = GetWorldPositionOfEntityBone(currentVehicle, boneIndex)
+                trunk = exports.ox_target:addSphereZone({
+                    coords = bonePos,
+                    radius = 2,
+                    options = {{onSelect = function() interact() end, icon = 'fa-regular fa-hand', label = 'Deposit Bin',}}
+                })
+            else
+                local bonePos = GetWorldPositionOfEntityBone(currentVehicle, boneIndex)
+                trunk = exports['qb-target']:AddCircleZone('trunktarget', vector3(bonePos.x, bonePos.y, bonePos.z), 2.0, {
+                    name = 'trunktarget', debugPoly = false , useZ = true}, {
+                    options = {{label = 'Deposit Bin', icon ='fa-regular fa-hand', 
+                    action = function ()
+                        interact()
+                    end}},
+                    distance = 2.0
+                })
+            end
         else
             print("Trunk bone not found!")
         end
@@ -392,7 +424,11 @@ end
 
 function DestroyBins()
     if trunk then
-        exports.ox_target:removeZone(trunk)
+        if TARGET == 'OX' then
+            exports.ox_target:removeZone(trunk)
+        else
+            exports['qb-target']:RemoveZone('trunktarget')
+        end
         trunk = nil
     end
     if PlayerProps then
@@ -433,6 +469,27 @@ Citizen.CreateThread(function()
     SetPedCanPlayAmbientAnims(ped, false)
     SetPedCanRagdollFromPlayerImpact(ped, false)
     SetEntityInvincible(ped, true)
+
+    if TARGET == 'OX' then
+        npczone = exports.ox_target:addBoxZone({
+            coords = vec3(NPC.coordx, NPC.coordy, NPC.coordz + 1),
+            size = vec3(1.5, 1.5, 1.5),
+            rotation = 45,
+            debug = false,
+            options = {{
+                name = 'yoda-garbage:startJob',
+                event = 'yoda-garbage:OpenMenu',
+                icon = 'fa-solid fa-cube',
+                label = 'Start Job'
+            }}
+        })
+    else 
+        npczone = exports['qb-target']:AddCircleZone('targetBoxStartJob', vec3(NPC.coordx, NPC.coordy, NPC.coordz + 1), 2.0, {
+            name = 'targetBoxStartJob', debugPoly = false, useZ = true}, {
+            options = {{label = 'Start Job', icon = 'fa-solid fa-cube', action = function() TriggerEvent('yoda-garbage:OpenMenu') end }},
+            distance = 2.0
+        })
+    end
 
     Citizen.Wait(10)
 end)
