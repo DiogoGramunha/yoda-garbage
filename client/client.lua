@@ -173,7 +173,8 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
             print("Vehicle created successfully with ID: " .. currentVehicle)
             if FRAMEWORK == 'QB' then
                 local vehicleNetId = NetworkGetNetworkIdFromEntity(currentVehicle)
-                TriggerServerEvent('yoda-garbage:giveKeys', vehicleNetId)
+                Wait(1000)
+                TriggerServerEvent('yoda-garbage:giveKeys', vehicleNetId, currentVehicle)
             end
         else
             print("Failed to create vehicle.")
