@@ -15,7 +15,7 @@ local onjob = false
 local onDuty = false
 local FRAMEWORK = Config.FRAMEWORK
 local NOTIFY = Config.NotifyType
-local TARGET = Config.Target
+local TARGET = Config.TARGET
 local FRAMEWORK = Config.FRAMEWORK
 
 if FRAMEWORK == 'ESX' then
