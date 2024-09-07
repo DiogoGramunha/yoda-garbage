@@ -28,6 +28,7 @@ local GarbageJobBlip = AddBlipForCoord(Config.CarSpawn.coordx, Config.CarSpawn.c
     SetBlipSprite(GarbageJobBlip, 318)
     SetBlipColour(GarbageJobBlip, 2)
     SetBlipScale(GarbageJobBlip, 0.6)
+    SetBlipAsShortRange(GarbageJobBlip, true)
     BeginTextCommandSetBlipName("STRING")
     AddTextComponentString("Garbage Center")
     EndTextCommandSetBlipName(GarbageJobBlip)
