@@ -3,6 +3,9 @@ Config = {}
 Config.FRAMEWORK = 'QB' -- ESX OR QB
 Config.INVENTORY = 'OX' -- OX OR QB
 Config.NotifyType = 'OX' -- OX OR QB
+Config.TARGET = 'OX' -- OX OR QB
+
+Config.vehicleKeySystem = 'qb' -- qbx or qb 
 
 Config.GarbageValue = { value = 15,}
 
