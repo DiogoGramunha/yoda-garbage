@@ -120,6 +120,7 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
                     clearBlipsAndTargets()
                     deleteCurrentVehicle()
                     onjob = false
+                    payment = 0
                 end,
             },
         }
@@ -137,6 +138,7 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
                     clearBlipsAndTargets()
                     deleteCurrentVehicle()
                     onjob = false
+                    payment = 0
                 end,
             },
         }
