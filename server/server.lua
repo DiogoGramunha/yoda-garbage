@@ -92,4 +92,5 @@ AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
             player.Functions.AddMoney('cash', Config.Context.value)
         end
     end
+    payment = 0
 end)
