@@ -244,7 +244,7 @@ RegisterNetEvent('yoda-garbage:createZone&GarbageBlips', function(locationKey)
         SetBlipAlpha(zoneBlip, 100)
         SetBlipColour(zoneBlip, 5)
 
-        numGarbages = math.random(1, 19)
+        numGarbages = math.random(1, Config.MaxBins)
 
         local garbageKeys = {}
         for k in pairs(garbageBlips) do
