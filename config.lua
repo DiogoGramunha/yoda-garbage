@@ -8,6 +8,7 @@ Config.TARGET = 'OX' -- OX OR QB
 Config.vehicleKeySystem = 'qb' -- qbx or qb 
 
 Config.GarbageValue = { value = 15,}
+Config.MaxBins = 19
 
 Config.NPC = {
     model = 's_m_y_garbage',
