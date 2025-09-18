@@ -71,47 +71,16 @@ end)
 RegisterNetEvent('yoda-garbage:getPayment')
 AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
     local _source = source
-    local maxBins = 19  -- Maximum number of bins per round
-    local maxPaymentPerRound = (maxBins * Config.GarbageValue.value) + Config.Context.value  -- Maximum amount that can be paid per round of trash
-
     local player
-    -- Get the player based on the framework used
+
     if Config.FRAMEWORK == 'QB' then
         player = QBCore.Functions.GetPlayer(_source)
     elseif Config.FRAMEWORK == 'ESX' then
         player = ESX.GetPlayerFromId(_source)
     end
 
-    -- Get the time of the last payment
-    local lastPaymentTime = player.PlayerData.lastPaymentTime or 0  -- Time of the last payment (in seconds)
-    local currentTime = os.time()
-    local timeDiff = currentTime - lastPaymentTime  -- Time difference since the last payment, in seconds
-
-    -- Check if the deposited bins are valid (maximum of 19)
-    if binsDeposited <= 0 or binsDeposited > maxBins then
-        print(('[Yoda-Garbage] Exploit Attempt: Player %s tried to deposit an invalid number of bins (%d).'):format(player, binsDeposited))
-        TriggerClientEvent('yoda-garbage:paymentFail', _source)
-        return
-    end
-
-    -- Calculate the expected total payment
     local totalPayment = (payment * binsDeposited) + Config.Context.value
 
-    -- Check if the total payment exceeds the expected limit for the round
-    if totalPayment > maxPaymentPerRound then
-        print(('[Yoda-Garbage] Exploit Attempt: Player %s tried to claim an invalid payment (Total Payment: %d).'):format(player, totalPayment))
-        TriggerClientEvent('yoda-garbage:paymentFail', _source)
-        return
-    end
-
-    -- Check the payment frequency (e.g., if the player is trying to receive payment too quickly, in less than 1 minute)
-    if timeDiff < 60 then
-        print(('[Yoda-Garbage] Exploit Attempt: Player %s tried to receive payment too quickly (Time since last payment: %d seconds).'):format(player, timeDiff))
-        TriggerClientEvent('yoda-garbage:paymentFail', _source)
-        return
-    end
-
-    -- If all validations pass, perform the payment
     if INVENTORY == 'OX' then
         exports.ox_inventory:AddItem(_source, 'cash', totalPayment)
         TriggerClientEvent('yoda-garbage:Payment', _source, totalPayment)
@@ -124,7 +93,6 @@ AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
         TriggerClientEvent('yoda-garbage:Payment', _source, totalPayment)
     end
 
-    -- Update the last payment time to prevent rapid sequential payments
     player.PlayerData.lastPaymentTime = currentTime
 end)
 
