@@ -25,69 +25,10 @@ Config.CarSpawn = {
     heading = 258.3183,
 }
 
-Config.Context = {
-    title = 'Garbage Job',
-    titleAlone = 'Start Job - Alone',
-    descriptionAlone = 'Work alone! \n Collection: 1 \n Delivery: 1',
-    iconAlone = 'person',
-    labelAlone = 'Truck Rental',
-    value = 300,
-    titleFriend = 'Start Job - With a Friend',
-    descriptionFriend = 'Work with a Friend! \n Collection: 2 \n Delivery: 2',
-    iconFriend = 'person',
-    labelFriend = 'Truck Rental',
-    titleAbort = 'Abort Job',
-    descriptionAbort = '',
-    iconAbort = 'fa-solid fa-xmark',
-    titleFinish = 'Finish Job',
-    descriptionFinish = '',
-    iconFinish = 'fa-solid fa-money-bill',
-
-}
-
 Config.Bins = {
     "prop_bin_01a",
     "prop_bin_03a",
     "prop_bin_05a"
-}
-
-Config.Notify = {
-    NotEnoughMoney = {
-        title = 'Garbage Job',
-        description = 'You dont have enough money',
-        duration = 5000,
-        type = 'error'
-    },
-    JobStarted = {
-        title = 'Garbage Job',
-        description = 'Get in the truck and get to work',
-        duration = 5000,
-        type = 'success'
-    },
-    BinDeposited = {
-        title = 'Garbage Job',
-        description = 'You deposited a bin. Lets get the others!' ,
-        duration = 5000,
-        type = 'success'
-    },
-    JobEnded = {
-        title = 'Garbage Job',
-        description = 'Get back to central and get your payment',
-        duration = 10000,
-        type = 'success'
-    },
-    paymentFail = {
-        title = 'Garbage Job',
-        description = 'Those who dont work dont get paid',
-        duration = 10000,
-        type = 'error'
-    },
-    Payment = {
-        title = 'Garbage Job',
-        description = 'You get paid!',
-        duration = 10000,
-        type = 'success'
-    }
 }
 
 Config.GarbLocation = {

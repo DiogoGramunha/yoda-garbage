@@ -7,16 +7,24 @@ name 'yoda_garbage'
 author 'YodaThings'
 version '1.4.0'
 
-shared_script {
-    '@ox_lib/init.lua',
+shared_scripts {
+    'ox_lib/init.lua',
+    'config.lua',
+}
+
+files {
+    'locales/*.json',
+    'modules/**/client.lua',
 }
 
 client_script {
-    'config.lua',
     'client/*.lua'
+    'modules/notify/*.lua',
 }
 
+dependencies { 'ox_lib' }
+
 server_script {
-    'config.lua',
     'server/*.lua'
 }
+

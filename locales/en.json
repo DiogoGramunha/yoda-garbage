@@ -1,0 +1,23 @@
+{
+    "TitleFriend" : "Start Job - With a Friend",
+    "title" : "Garbage Job",
+    "TitleAlone" : "Start Job - Alone",
+    "descriptionAlone" : "Work alone! \n Collection: 1 \n Delivery:1",
+    "lableAlone" : "Truck Rental",
+    "value" : 300,
+    "descriptionFriend" : "Work with a friend! \n Collection: 2 \n Delivery:2",
+    "lableFriend" : "Truck Rental",
+    "titleAbort" : "Abort Job",
+    "descriptionAbort" : "Abort the job and return the vehicle.",
+    "titleFinish" : "Finish Job",
+    "descriptionFinish" : "Finish the job and return the vehicle.",
+    "notifyTitle" : "Garbage Job",
+    "NotEnoughMoney" : "You don't have enough money to rent the truck.",
+    "JobStarted" : "Get in the truck and get to work!",
+    "BinDeposited" : "You deposited a bin. Lets get the others!",
+    "JobFinished" : "Get back to central and get your payment",
+    "PaymentFailed" : "Those who dont work dont get paid",
+    "Payment" : "You received $",
+    "RentedVehicle" : "You have rented a vehicle.",
+    "NoLocation" : "No pick-up location set up!"
+}

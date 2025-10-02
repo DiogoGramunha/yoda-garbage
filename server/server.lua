@@ -3,6 +3,8 @@
 local FRAMEWORK = Config.FRAMEWORK
 local INVENTORY = Config.INVENTORY
 
+local Utils = require 'modules.utils.server'
+
 -- Initialize the framework
 if FRAMEWORK == 'ESX' then
     ESX = exports["es_extended"]:getSharedObject()
@@ -52,14 +54,14 @@ AddEventHandler('yoda-garbage:RentVeh', function()
         local player = QBCore.Functions.GetPlayer(source)
         if player.Functions.GetItemByName('cash') and player.Functions.GetItemByName('cash').amount >= Config.Context.value then
             player.Functions.RemoveItem("cash", Config.Context.value)
-            QBCore.Functions.Notify('You have rented a vehicle with cash.', 'success', 5000)
+            Utils.Notify(locale('RentedVehicle'), 'success', 5000)
             rentVeh = true
         elseif player.PlayerData.money.bank >= Config.Context.value then
             player.Functions.RemoveMoney('bank', Config.Context.value)
-            QBCore.Functions.Notify('You have rented a vehicle with bank money.', 'success', 5000)
+            Utils.Notify(locale('RentedVehicle'), 'success', 5000)
             rentVeh = true
         else
-            QBCore.Functions.Notify('You do not have enough money to rent a vehicle.', 'error', 5000)
+            Utils.Notify(locale('NotEnoughMoney'), 'error', 5000)
             rentVeh = false
         end
     end
@@ -79,18 +81,23 @@ AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
         player = ESX.GetPlayerFromId(_source)
     end
 
+    if binsDeposited <= 0 then
+        Utils.Notify(locale('PaymentFailed'), 'error', 10000)
+        return
+    end
+
     local totalPayment = (payment * binsDeposited) + Config.Context.value
 
     if INVENTORY == 'OX' then
         exports.ox_inventory:AddItem(_source, 'cash', totalPayment)
-        TriggerClientEvent('yoda-garbage:Payment', _source, totalPayment)
+        Utils.Notify(locale('Payment') .. totalPayment, 'success', 10000)
     else
         if Config.FRAMEWORK == 'QB' then
             player.Functions.AddMoney('cash', totalPayment)
         elseif Config.FRAMEWORK == 'ESX' then
             player.addMoney(totalPayment)
         end
-        TriggerClientEvent('yoda-garbage:Payment', _source, totalPayment)
+        Utils.Notify(locale('Payment') .. totalPayment, 'success', 10000)
     end
 
     player.PlayerData.lastPaymentTime = currentTime

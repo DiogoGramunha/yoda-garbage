@@ -10,13 +10,14 @@ local isInteracting = {}
 local trunk = nil
 local isCarryingGarbage = false
 local NPC = Config.NPC
-local Context = Config.Context
 local onjob = false
 local onDuty = false
 local FRAMEWORK = Config.FRAMEWORK
 local NOTIFY = Config.NotifyType
 local TARGET = Config.TARGET
 local FRAMEWORK = Config.FRAMEWORK
+
+local Utils = require 'modules.utils.client'
 
 if FRAMEWORK == 'ESX' then
     ESX = exports["es_extended"]:getSharedObject()
@@ -67,54 +68,54 @@ end
 RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
     exports.ox_lib:registerContext({
         id = 'Job_Menu',
-        title = Context.title,
+        title = locale('title'),
         options = {
             {
                 title = 'On Duty',
                 description = '',
-                icon = Context.iconAlone,
+                icon = 'person',
                 onSelect = function()
                     onDuty = true
                 end,
                 metadata = {
-                    {label = Context.labelAlone, value = Context.value}
+                    {label = locale('lableAlone'), value = locale('value')}
                 },
             },
             {
-                title = Context.titleAlone,
-                description = Context.descriptionAlone,
-                icon = Context.iconAlone,
+                title = locale('titleAlone'),
+                description = locale('descriptionAlone'),
+                icon = 'person',
                 onSelect = function()
                     TriggerServerEvent('yoda-garbage:RentVeh')
                     onjob = true
                 end,
                 metadata = {
-                    {label = Context.labelAlone, value = Context.value}
+                    {label = locale('lableAlone'), value = locale('value')}
                 },
             },
             {
-                title = Context.titleFriend,
-                description = Context.descriptionFriend,
-                icon = Context.iconFriend,
+                title = locale('TitleFriend'),
+                description = locale('DescriptionFriend'),
+                icon = 'person',
                 disabled = true,
                 onSelect = function()
                     TriggerServerEvent('yoda-garbage:RentVeh')
                     onjob = true
                 end,
                 metadata = {
-                    {label = Context.labelFriend, value = Context.value}
+                    {label = locale('labelFriend'), value = locale('value')}
                 },
             },
         }
     })
     exports.ox_lib:registerContext({
         id = 'Job_Menu2',
-        title = Context.title,
+        title = locale('title'),
         options = {
             {
-                title = Context.titleAbort,
-                description = Context.descriptionAbort,
-                icon = Context.iconAbort,
+                title = locale('titleAbort'),
+                description = locale('descriptionAbort'),
+                icon = 'fa-solid fa-xmark',
                 onSelect = function()
                     TriggerServerEvent('yoda-garbage:getPayment', payment, binsDeposited)
                     clearBlipsAndTargets()
@@ -127,12 +128,12 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
     })
     exports.ox_lib:registerContext({
         id = 'Job_Menu3',
-        title = Context.title,
+        title = locale('title'),
         options = {
             {
-                title = Context.titleFinish,
-                description = Context.descriptionFinish,
-                icon = Context.iconFinish,
+                title = locale('titleFinish'),
+                description = locale('descriptionFinish'),
+                icon = 'fa-solid fa-money-bill',
                 onSelect = function()
                     TriggerServerEvent('yoda-garbage:getPayment', payment, binsDeposited)
                     clearBlipsAndTargets()
@@ -178,11 +179,7 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
             print("Failed to create vehicle.")
         end
 
-        if NOTIFY == 'OX' then
-            exports.ox_lib:notify(Config.Notify.JobStarted)
-        else
-            QBCore.Functions.Notify(Config.Notify.JobStarted.description, 'success', 5000)
-        end
+        Utils.Notify(locale('JobStarted'), 'success', 5000)
 
         Citizen.CreateThread(function()
             local playerPed = PlayerPedId()
@@ -195,11 +192,7 @@ RegisterNetEvent('yoda-garbage:RentVehResponse', function(rentVeh)
             end
         end)
     else
-        if NOTIFY == 'OX' then
-            exports.ox_lib:notify(Config.Notify.NotEnoughMoney)
-        else
-            QBCore.Functions.Notify(Config.Notify.NotEnoughMoney.description, 'error', 5000)
-        end
+        Utils.Notify(locale('NotEnoughMoney'), 'error', 5000)
     end
 end)
 
@@ -221,11 +214,7 @@ RegisterNetEvent('yoda-garbage:garbageLocation', function()
         SetNewWaypoint(randomLocation.locx, randomLocation.locy)
         TriggerEvent('yoda-garbage:createZone&GarbageBlips', currentLocationKey)
     else
-        if NOTIFY == 'OX' then
-            exports.ox_lib:notify({type = 'error', description = 'No pick-up location set up!'})
-        else 
-            QBCore.Functions.Notify('No pick-up location set up!', 'error', 5000)
-        end
+        Utils.Notify(locale('NoLocation'), 'error', 5000)
     end
 end)
 
@@ -388,19 +377,12 @@ function interact()
 
     if binsDeposited == numGarbages then
         RemoveBlip(zoneBlip)
-        if NOTIFY == 'OX' then
-            exports.ox_lib:notify(Config.Notify.JobEnded)
-        else
-            QBCore.Functions.Notify(Config.Notify.JobEnded.description, 'success', 5000)
-        end
+        
+        Utils.Notify(locale('JobFinished'), 'success', 10000)
 
         SetNewWaypoint(Config.CarSpawn.coordx, Config.CarSpawn.coordy, Config.CarSpawn.coordz)
     else
-        if NOTIFY == 'OX' then
-            exports.ox_lib:notify(Config.Notify.BinDeposited)
-        else
-            QBCore.Functions.Notify(Config.Notify.BinDeposited.description, 'success', 5000)
-        end
+        Utils.Notify(locale('BinDeposited'), 'success', 5000)
     end
 
     payment = payment + Config.GarbageValue.value
@@ -440,18 +422,6 @@ function DestroyBins()
     end
     PlayerHasProp = false
 end
-
-RegisterNetEvent('yoda-garbage:paymentFail', function()
-    if NOTIFY == 'OX' then
-        exports.ox_lib:notify(Config.Notify.paymentFail)
-    else 
-        QBCore.Functions.Notify(Config.Notify.paymentFail.description, 'error', 5000)
-    end
-end)
-
-RegisterNetEvent('yoda-garbage:Payment', function()
-    exports.ox_lib:notify(Config.Notify.Payment)
-end)
 
 Citizen.CreateThread(function()
     local model = GetHashKey(NPC.model)
