@@ -93,19 +93,6 @@ RegisterNetEvent('yoda-garbage:OpenMenu', function(args)
                     {label = locale('lableAlone'), value = locale('value')}
                 },
             },
-            {
-                title = locale('TitleFriend'),
-                description = locale('DescriptionFriend'),
-                icon = 'person',
-                disabled = true,
-                onSelect = function()
-                    TriggerServerEvent('yoda-garbage:RentVeh')
-                    onjob = true
-                end,
-                metadata = {
-                    {label = locale('labelFriend'), value = locale('value')}
-                },
-            },
         }
     })
     exports.ox_lib:registerContext({
