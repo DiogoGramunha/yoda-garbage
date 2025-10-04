@@ -1,7 +1,4 @@
 Utils = {}
---- @param message string
---- @param type 'inform' | 'success' | 'error'
---- @param time number
 function Utils.Notify(message, type, time)
     lib.notify({
         title = locale('notifyTitle'),
