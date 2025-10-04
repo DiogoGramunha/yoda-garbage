@@ -22,6 +22,7 @@ local function giveVehicleKeys(vehicleNetId, vehicle)
         if Config.vehicleKeySystem == 'qb' then
             TriggerClientEvent("vehiclekeys:client:SetOwner", playerId, plate)
         elseif Config.vehicleKeySystem == 'qbx' then
+            exports.qbx_vehiclekeys:GiveKeys(plate)
             exports['qbx_vehiclekeys']:GiveKeys(playerId, plate)
         end
         print("Keys given to vehicle with plate: " .. plate)
