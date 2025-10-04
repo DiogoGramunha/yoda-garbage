@@ -14,16 +14,14 @@ end
 
 -- Function to give vehicle keys
 local function giveVehicleKeys(vehicleNetId, vehicle)
-    local playerId = source
     local currentVehicle = NetworkGetEntityFromNetworkId(vehicleNetId)
     Wait(1000)
     if currentVehicle and DoesEntityExist(currentVehicle) then
         local plate = GetVehicleNumberPlateText(currentVehicle)
         if Config.vehicleKeySystem == 'qb' then
-            TriggerClientEvent("vehiclekeys:client:SetOwner", playerId, plate)
+            TriggerClientEvent("vehiclekeys:client:SetOwner", source, plate)
         elseif Config.vehicleKeySystem == 'qbx' then
-            exports.qbx_vehiclekeys:GiveKeys(plate)
-            exports['qbx_vehiclekeys']:GiveKeys(playerId, plate)
+            exports.qbx_vehiclekeys:GiveKeys(source, vehicle)
         end
         print("Keys given to vehicle with plate: " .. plate)
     else
