@@ -14,7 +14,7 @@ shared_scripts {
 
 files {
     'locales/*.json',
-    'modules/**/client.lua',
+    'modules/**/*',
 }
 
 client_script {
