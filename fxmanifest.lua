@@ -19,7 +19,6 @@ files {
 
 client_script {
     'client/*.lua',
-    'modules/notify/*.lua',
 }
 
 dependencies { 'ox_lib' }
