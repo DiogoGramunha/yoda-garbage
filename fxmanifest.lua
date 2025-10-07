@@ -18,7 +18,7 @@ files {
 }
 
 client_script {
-    'client/*.lua'
+    'client/*.lua',
     'modules/notify/*.lua',
 }
 
