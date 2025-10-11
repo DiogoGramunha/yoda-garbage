@@ -9,6 +9,7 @@ Config.vehicleKeySystem = 'qb' -- qbx or qb
 
 Config.GarbageValue = { value = 15,}
 Config.MaxBins = 19
+Config.Context = { value = 300,} -- Vehicle rental value
 
 Config.NPC = {
     model = 's_m_y_garbage',
@@ -489,7 +490,7 @@ Config.GarbLocation = {
             },
         },
     },
-    Loc4 = {
+    Loc5 = {
         Location = {
             locx = 149.1974,
             locy = -1298.4204,

@@ -1,5 +1,4 @@
 fx_version 'cerulean'
-use_experimental_fxv2_oal 'yes'
 lua54 'yes'
 game 'gta5'
 
@@ -8,22 +7,19 @@ author 'YodaThings'
 version '1.4.0'
 
 shared_scripts {
-    'ox_lib/init.lua',
-    'config.lua',
+	'@ox_lib/init.lua',
+	'config.lua',
+	'shared/init.lua',
 }
 
 files {
     'locales/*.json',
-    'modules/**/*',
+    'modules/**/client.lua',
+    'modules/bridge/**/client.lua',
 }
 
-client_script {
-    'client/*.lua',
-}
+client_script 'client/client.lua'
+
+server_script 'server/server.lua'
 
 dependencies { 'ox_lib' }
-
-server_script {
-    'server/*.lua'
-}
-

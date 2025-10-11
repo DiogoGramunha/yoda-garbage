@@ -1,4 +1,4 @@
--- Fallback Utils module
+-- Utils module for QB framework
 local Utils = {}
 
 function Utils.Notify(playerId, message, type, time)

@@ -1,4 +1,4 @@
--- Fallback Utils module
+-- Utils module for ESX framework
 local Utils = {}
 
 function Utils.Notify(playerId, message, type, time)

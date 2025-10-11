@@ -3,13 +3,15 @@
 local FRAMEWORK = Config.FRAMEWORK
 local INVENTORY = Config.INVENTORY
 
+-- Load utils module dynamically based on framework
 local Utils = require 'modules.utils.server'
 
--- Initialize the framework
+-- Initialize the framework using shared system
+local frameworkObject = shared.GetFrameworkObject()
 if FRAMEWORK == 'ESX' then
-    ESX = exports["es_extended"]:getSharedObject()
+    ESX = frameworkObject
 else
-    QBCore = exports['qb-core']:GetCoreObject()
+    QBCore = frameworkObject
 end
 
 -- Function to give vehicle keys
@@ -53,14 +55,14 @@ AddEventHandler('yoda-garbage:RentVeh', function()
         local player = QBCore.Functions.GetPlayer(source)
         if player.Functions.GetItemByName('cash') and player.Functions.GetItemByName('cash').amount >= Config.Context.value then
             player.Functions.RemoveItem("cash", Config.Context.value)
-            Utils.Notify(locale('RentedVehicle'), 'success', 5000)
+            Utils.Notify(source, locale('RentedVehicle'), 'success', 5000)
             rentVeh = true
         elseif player.PlayerData.money.bank >= Config.Context.value then
             player.Functions.RemoveMoney('bank', Config.Context.value)
-            Utils.Notify(locale('RentedVehicle'), 'success', 5000)
+            Utils.Notify(source, locale('RentedVehicle'), 'success', 5000)
             rentVeh = true
         else
-            Utils.Notify(locale('NotEnoughMoney'), 'error', 5000)
+            Utils.Notify(source, locale('NotEnoughMoney'), 'error', 5000)
             rentVeh = false
         end
     end
@@ -81,7 +83,7 @@ AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
     end
 
     if binsDeposited <= 0 then
-        Utils.Notify(locale('PaymentFailed'), 'error', 10000)
+        Utils.Notify(_source, locale('PaymentFailed'), 'error', 10000)
         return
     end
 
@@ -89,14 +91,14 @@ AddEventHandler('yoda-garbage:getPayment', function(payment, binsDeposited)
 
     if INVENTORY == 'OX' then
         exports.ox_inventory:AddItem(_source, 'cash', totalPayment)
-        Utils.Notify(locale('Payment') .. totalPayment, 'success', 10000)
+        Utils.Notify(_source, locale('Payment') .. totalPayment, 'success', 10000)
     else
         if Config.FRAMEWORK == 'QB' then
             player.Functions.AddMoney('cash', totalPayment)
         elseif Config.FRAMEWORK == 'ESX' then
             player.addMoney(totalPayment)
         end
-        Utils.Notify(locale('Payment') .. totalPayment, 'success', 10000)
+        Utils.Notify(_source, locale('Payment') .. totalPayment, 'success', 10000)
     end
 
     player.PlayerData.lastPaymentTime = currentTime
